@@ -1,11 +1,9 @@
 import os
 import stat
 import sys
-import time
 import zipfile
 import shutil
 import requests
-import psutil
 import json
 from bs4 import BeautifulSoup
 from selenium import webdriver
@@ -25,7 +23,7 @@ CONFIG_PATH = os.path.join(BASE_DIR, "echo_config.json")
 DRIVER_PATH = os.path.join(BASE_DIR, "chromedriver.exe")
 TEMP_DIR = os.path.join(BASE_DIR, "temp")
 
-# ------------------------------ ID, PASSWD 설정 ------------------------------ #\
+# ------------------------------ ID, PASSWD, LOGIN_URL 설정 ------------------------------ #\
 if not os.path.exists(CONFIG_PATH):
     print("⚠️ config.json 파일이 없어요. ID/PW 넣고 다시 실행해주세요!")
     sys.exit(1)
@@ -34,6 +32,7 @@ with open(CONFIG_PATH, 'r', encoding='utf-8') as f:
 
 ID = config["ID"]
 PASSWD = config["PASSWD"]
+LOGIN_URL = config["LOGIN_URL"]
 
 # ------------------------------ 파일 삭제 권한 설정 ------------------------------ #
 def remove_readonly(func, path, _):
@@ -89,7 +88,8 @@ def login():
     chrome_options.add_experimental_option("useAutomationExtension", False)
 
     driver = webdriver.Chrome(DRIVER_PATH, options=chrome_options)
-    driver.get("https://echosso.hansol.com/login/login.do")
+    driver.get(LOGIN_URL)
+
     driver.implicitly_wait(2)
 
     driver.find_element(By.ID, 'txtUserID').send_keys(ID)

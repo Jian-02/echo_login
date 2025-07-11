@@ -1,6 +1,6 @@
 # 🧑‍💼 Hansol Echo 자동 로그인 도구
 
-회사 홈페이지(https://echosso.hansol.com)에 자동 로그인해주는 셀레니움 기반 Python 스크립트입니다.  
+회사 홈페이지에 자동 로그인해주는 셀레니움 기반 Python 스크립트입니다.  
 크롬 드라이버 최신 버전 자동 다운로드 → 브라우저 자동 실행 → 로그인까지 처리됩니다.
 
 ---
@@ -20,7 +20,8 @@ pip install -r requirements.txt
 ```bash
 {
   "ID": "your_user_id",
-  "PASSWD": "your_password"
+  "PASSWD": "your_password",
+  "LOGIN_URL": "https://회사로그인주소/login"
 }
 ```
 

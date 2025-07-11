@@ -1,0 +1,5 @@
+{
+  "ID": "your_id",
+  "PASSWD": "your_password",
+  "LOGIN_URL": "https://회사로그인주소/login"
+}

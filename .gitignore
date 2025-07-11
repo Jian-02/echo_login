@@ -1,6 +1,7 @@
 # PyInstaller build output
 build/
 *.spec
+chromedriver.exe
 
 # 기타 자동 생성 파일
 __pycache__/
@@ -9,3 +10,4 @@ __pycache__/
 *.pyd
 
 # 개인정보
+echo_config.json
