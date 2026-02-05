@@ -11,7 +11,10 @@ from bs4 import BeautifulSoup
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
 from selenium.common.exceptions import WebDriverException
+from selenium.common.exceptions import SessionNotCreatedException
+from selenium.webdriver.support import expected_conditions as EC
 
 # ------------------------------ 경로 설정 ------------------------------ #
 if getattr(sys, 'frozen', False):
@@ -97,19 +100,32 @@ def update_driver(latest_version):
 
 # ------------------------------ Selenium으로 로그인 ------------------------------ #
 def login():
+
     chrome_options = Options()
     chrome_options.add_experimental_option("detach", True)  # 창 유지
     chrome_options.add_experimental_option("excludeSwitches", ["enable-logging", "enable-automation"])
     chrome_options.add_experimental_option("useAutomationExtension", False)
 
     driver = webdriver.Chrome(DRIVER_PATH, options=chrome_options)
+    wait = WebDriverWait(driver, 20)
     driver.get(LOGIN_URL)
 
-    driver.implicitly_wait(2)
+    print("현재 URL:", driver.current_url)
 
-    driver.find_element(By.ID, 'txtUserID').send_keys(ID)
-    driver.find_element(By.ID, 'txtPwd').send_keys(PASSWD)
-    driver.find_element(By.CLASS_NAME, "login_btn").click()
+    # 🔥 2️⃣ main frame 진입 (이거 핵심)
+    wait.until(EC.frame_to_be_available_and_switch_to_it((By.NAME, "main")))
+
+    print("frame 진입 완료")
+
+    # 🔥 3️⃣ frame 안에서 element 찾기
+    id_input = wait.until(EC.presence_of_element_located((By.ID, "txtUserID")))
+    pw_input = wait.until(EC.presence_of_element_located((By.ID, "txtPwd")))
+    login_btn = wait.until(EC.element_to_be_clickable((By.CLASS_NAME, "login_btn")))
+
+    id_input.send_keys(ID)
+    pw_input.send_keys(PASSWD)
+    login_btn.click()
+
 
 # ------------------------------ 실행 ------------------------------ #
 if __name__ == "__main__":
