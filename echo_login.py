@@ -5,6 +5,8 @@ import zipfile
 import shutil
 import requests
 import json
+import time
+import winreg
 from bs4 import BeautifulSoup
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
@@ -46,6 +48,19 @@ def get_local_driver_version():
         version = result.strip().split(" ")[1]
         return version
     except Exception:
+        return None
+
+#------------------------------ 현재 설치된 크롬 버전 확인 ------------------------------ #
+def get_chrome_version():
+    try:
+        key = winreg.OpenKey(
+            winreg.HKEY_CURRENT_USER,
+            r"Software\Google\Chrome\BLBeacon"
+        )
+        version, _ = winreg.QueryValueEx(key, "version")
+        return version
+    except Exception as e:
+        print("❌ Chrome 버전 조회 실패:", e)
         return None
 
 # ------------------------------ 최신 드라이버 버전 가져오기 ------------------------------ #
@@ -99,17 +114,28 @@ def login():
 # ------------------------------ 실행 ------------------------------ #
 if __name__ == "__main__":
     print("크롬 드라이버 버전 확인 중...")
-    local_version = get_local_driver_version()
-    latest_version = get_latest_driver_version()
+    local_driver_version = get_local_driver_version()
+    local_version = get_chrome_version()
+    print(f"로컬 드라이버 버전: {local_driver_version}")
+    
+    if local_driver_version != local_version:
+        print(f"드라이버 업데이트 필요: {local_driver_version} → {local_driver_version}")
+        update_driver(local_version)
 
-    if local_version != latest_version:
-        print(f"드라이버 업데이트 필요: {local_version} → {latest_version}")
-        update_driver(latest_version)
     else:
-        print(f"최신 드라이버 사용 중: {local_version}")
+        print(f"최신 드라이버 사용 중: {local_driver_version}")
 
     print("자동 로그인 시도 중...")
     try:
         login()
+
+    except SessionNotCreatedException as e:
+        print("❌ 드라이버 버전 mismatch:", e)
+
+
     except WebDriverException as e:
         print("로그인 실패:", str(e))
+    
+    time.sleep(2)
+
+    raise Exception("🚨 driver 생성 실패")
