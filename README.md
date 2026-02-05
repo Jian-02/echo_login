@@ -55,6 +55,11 @@ pyinstaller --onefile --icon=hansol_icon.ico echo_login.py
 빌드 후 dist/echo_login.exe 파일이 생성됩니다.
 .exe 파일은 echo_config.json과 같은 폴더에 두고 실행해야 정상 작동합니다.
 
+```bash
+python -m pip install pyinstaller
+```
+위는 pyinstaller를 사용하기 위한 패키지 설치
+
 ## 🛠 필요 파일 구성
 
 ```bash
